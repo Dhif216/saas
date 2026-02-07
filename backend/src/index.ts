@@ -4,14 +4,14 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import 'dotenv/config';
 
-import authRoutes from './routes/auth.routes';
-import restaurantRoutes from './routes/restaurant.routes';
-import orderRoutes from './routes/order.routes';
-import { authenticate } from './middleware/auth';
-import { errorHandler, notFoundHandler } from './middleware/errorHandler';
-import { sanitizeRequest } from './middleware/validation';
-import { seedSupabase } from './seeds/seedSupabase';
-import { initializeDatabase } from './db/supabase';
+import authRoutes from './routes/auth.routes.js';
+import restaurantRoutes from './routes/restaurant.routes.js';
+import orderRoutes from './routes/order.routes.js';
+import { authenticate } from './middleware/auth.js';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { sanitizeRequest } from './middleware/validation.js';
+import { seedSupabase } from './seeds/seedSupabase.js';
+import { initializeDatabase } from './db/supabase.js';
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllRestaurants, getRestaurant, getMenuItems, createRestaurant as createSupabaseRestaurant, updateRestaurant, createMenuItem, updateMenuItem, deleteMenuItem, getRestaurantsByUserId } from '../db/supabase';
+import { getAllRestaurants, getRestaurant, getMenuItems, createRestaurant as createSupabaseRestaurant, updateRestaurant, createMenuItem, updateMenuItem, deleteMenuItem, getRestaurantsByUserId } from '../db/supabase.js';
 
 export const restaurantController = {
   async getRestaurants(req: Request, res: Response) {

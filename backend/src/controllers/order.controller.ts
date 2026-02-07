@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { createOrder, getOrder, getUserOrders, updateOrderStatus, createOrderItem } from '../db/supabase';
-import { paymentService } from '../services/payment.service';
+import { createOrder, getOrder, getUserOrders, updateOrderStatus, createOrderItem } from '../db/supabase.js';
+import { paymentService } from '../services/payment.service.js';
 
 export const orderController = {
   async createOrder(req: Request, res: Response) {

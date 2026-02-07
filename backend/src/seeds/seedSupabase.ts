@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { supabase } from '../db/supabase';
+import { supabase } from '../db/supabase.js';
 
 export async function seedSupabase() {
   try {

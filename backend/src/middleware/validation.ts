@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../utils/errors';
+import { AppError } from '../utils/errors.js';
 
 export const validateRequestBody = (requiredFields: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {

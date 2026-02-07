@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { getUser, createUser, createSubscription } from '../db/supabase';
-import { generateToken } from '../utils/jwt';
-import { hashPassword, comparePassword } from '../utils/password';
-import { validateEmail, validatePassword } from '../utils/validation';
-import { badRequestError, conflictError, unauthorizedError } from '../utils/errors';
+import { getUser, createUser, createSubscription } from '../db/supabase.js';
+import { generateToken } from '../utils/jwt.js';
+import { hashPassword, comparePassword } from '../utils/password.js';
+import { validateEmail, validatePassword } from '../utils/validation.js';
+import { badRequestError, conflictError, unauthorizedError } from '../utils/errors.js';
 
 export const authController = {
   async signup(req: Request, res: Response) {

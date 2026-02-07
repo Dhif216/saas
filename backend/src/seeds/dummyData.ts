@@ -1,4 +1,4 @@
-import { db } from '../config/firebase';
+import { db } from '../config/firebase.js';
 import bcrypt from 'bcryptjs';
 
 // Hash passwords for test users

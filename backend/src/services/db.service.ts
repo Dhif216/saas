@@ -1,5 +1,5 @@
-import { db } from '../config/firebase';
-import type { User, Restaurant, MenuItem, Order } from '../types';
+import { db } from '../config/firebase.js';
+import type { User, Restaurant, MenuItem, Order } from '../types/index.js';
 
 // User Service
 export const userService = {
