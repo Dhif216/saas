@@ -65,10 +65,10 @@ export const restaurantService = {
     }
 
     const snap = await query.get();
-    let restaurants = snap.docs.map(doc => doc.data() as Restaurant);
+    let restaurants = snap.docs.map((doc: any) => doc.data() as Restaurant);
 
     if (filters?.cuisine) {
-      restaurants = restaurants.filter(r =>
+      restaurants = restaurants.filter((r: any) =>
         r.cuisine.includes(filters.cuisine!)
       );
     }
@@ -103,7 +103,7 @@ export const menuItemService = {
       .collection('menuItems')
       .where('restaurantId', '==', restaurantId)
       .get();
-    return snap.docs.map(doc => doc.data() as MenuItem);
+    return snap.docs.map((doc: any) => doc.data() as MenuItem);
   },
 
   async updateMenuItem(id: string, data: Partial<MenuItem>) {
@@ -140,7 +140,7 @@ export const orderService = {
       .where('userId', '==', userId)
       .orderBy('createdAt', 'desc')
       .get();
-    return snap.docs.map(doc => doc.data() as Order);
+    return snap.docs.map((doc: any) => doc.data() as Order);
   },
 
   async getOrdersByRestaurant(restaurantId: string) {
@@ -149,7 +149,7 @@ export const orderService = {
       .where('restaurantId', '==', restaurantId)
       .orderBy('createdAt', 'desc')
       .get();
-    return snap.docs.map(doc => doc.data() as Order);
+    return snap.docs.map((doc: any) => doc.data() as Order);
   },
 
   async updateOrder(id: string, data: Partial<Order>) {

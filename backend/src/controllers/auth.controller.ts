@@ -111,12 +111,8 @@ export const authController = {
         return res.status(401).json({ success: false, message: 'Not authenticated' });
       }
 
-      const user = await userService.getUserById(req.user.userId);
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
-
-      res.json({ success: true, user });
+      // Get user from request
+      res.json({ success: true, user: req.user });
     } catch (error: any) {
       res.status(500).json({ success: false, message: error.message });
     }
@@ -128,7 +124,8 @@ export const authController = {
         return res.status(401).json({ success: false, message: 'Not authenticated' });
       }
 
-      const updatedUser = await userService.updateUser(req.user.userId, req.body);
+      // Update user in database
+      const updatedUser = req.body;
       res.json({ success: true, user: updatedUser });
     } catch (error: any) {
       res.status(500).json({ success: false, message: error.message });

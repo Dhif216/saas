@@ -43,7 +43,7 @@ app.use(limiter);
 app.use(sanitizeRequest);
 
 // Health Check
-app.get('/health', (req, res) => {
+app.get('/health', (req: any, res: any) => {
   res.json({ success: true, message: 'Server is running' });
 });
 
