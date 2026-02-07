@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Loader, Star, Lock } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Loader } from 'lucide-react';
 import { restaurantService } from '@/services/restaurantService';
 
 interface MenuItem {
@@ -8,7 +8,7 @@ interface MenuItem {
   name: string;
   description: string;
   price: number;
-  image: string;
+  image?: string;
   available: boolean;
 }
 
@@ -16,33 +16,13 @@ interface Restaurant {
   id: string;
   name: string;
   description: string;
-  image: string;
+  image?: string;
   plan?: string;
+  widgetTheme?: 'basic' | 'pro' | 'premium';
 }
 
-const PLAN_FEATURES = {
-  basic: {
-    name: 'Basic',
-    color: '#6B7280',
-    features: ['Simple menu display', 'Basic ordering'],
-    locked: false,
-  },
-  pro: {
-    name: 'Pro',
-    color: '#3B82F6',
-    features: ['Beautiful design', 'Advanced filters', 'Item ratings', 'Promo badges'],
-    locked: false,
-  },
-  premium: {
-    name: 'Premium',
-    color: '#8B5CF6',
-    features: ['Premium animations', 'Analytics', 'Recommendations', 'Custom branding'],
-    locked: false,
-  },
-};
-
 // BASIC WIDGET - Simple and clean
-const BasicWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart, getTotalPrice, getTotalItems }: any) => (
+const BasicWidget = ({ restaurant, menuItems, cart, addToCart }: any) => (
   <div style={{
     fontFamily: 'system-ui, -apple-system, sans-serif',
     backgroundColor: '#FFFFFF',
@@ -100,7 +80,7 @@ const BasicWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart, g
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
         }}>
           <div style={{ fontSize: '12px', marginBottom: '4px' }}>
-            {getTotalItems()} items - ${getTotalPrice().toFixed(2)}
+            {(Object.values(cart) as number[]).reduce((total: number, qty: number) => total + qty, 0)} items - ${menuItems.reduce((total: number, item: MenuItem) => total + (item.price * (cart[item.id] || 0)), 0).toFixed(2)}
           </div>
           <button style={{
             width: '100%',
@@ -122,7 +102,7 @@ const BasicWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart, g
 );
 
 // PRO WIDGET - Beautiful with advanced features
-const ProWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart, getTotalPrice, getTotalItems }: any) => (
+const ProWidget = ({ restaurant, menuItems, cart, addToCart, setCart }: any) => (
   <div style={{
     fontFamily: 'system-ui, -apple-system, sans-serif',
     backgroundColor: '#FFFFFF',
@@ -272,7 +252,17 @@ const ProWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart, get
                         </span>
                         <div style={{ display: 'flex', gap: '4px' }}>
                           <button
-                            onClick={() => removeFromCart(itemId)}
+                            onClick={() => {
+                              setCart((prev: any) => {
+                                const newCart = { ...prev };
+                                if (newCart[itemId] > 1) {
+                                  newCart[itemId] -= 1;
+                                } else {
+                                  delete newCart[itemId];
+                                }
+                                return newCart;
+                              });
+                            }}
                             style={{
                               backgroundColor: 'rgba(255,255,255,0.2)',
                               color: 'white',
@@ -317,7 +307,7 @@ const ProWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart, get
                   }}>
                     <span style={{ fontSize: '14px' }}>Total:</span>
                     <span style={{ fontSize: '18px', fontWeight: 'bold' }}>
-                      ${getTotalPrice().toFixed(2)}
+                      ${menuItems.reduce((total: number, item: MenuItem) => total + (item.price * (cart[item.id] || 0)), 0).toFixed(2)}
                     </span>
                   </div>
                   <button style={{
@@ -348,7 +338,7 @@ const ProWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart, get
 );
 
 // PREMIUM WIDGET - Ultra premium with all features
-const PremiumWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart, getTotalPrice, getTotalItems }: any) => (
+const PremiumWidget = ({ restaurant, menuItems, cart, addToCart, setCart }: any) => (
   <div style={{
     fontFamily: 'system-ui, -apple-system, sans-serif',
     backgroundColor: '#0F172A',
@@ -521,7 +511,7 @@ const PremiumWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart,
                 borderRadius: '12px',
                 fontSize: '12px',
               }}>
-                {getTotalItems()}
+                {(Object.values(cart) as number[]).reduce((total: number, qty: number) => total + qty, 0)}
               </span>
             </h3>
 
@@ -552,7 +542,17 @@ const PremiumWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart,
                           </span>
                           <div style={{ display: 'flex', gap: '6px' }}>
                             <button
-                              onClick={() => removeFromCart(itemId)}
+                              onClick={() => {
+                                setCart((prev: any) => {
+                                  const newCart = { ...prev };
+                                  if (newCart[itemId] > 1) {
+                                    newCart[itemId] -= 1;
+                                  } else {
+                                    delete newCart[itemId];
+                                  }
+                                  return newCart;
+                                });
+                              }}
                               style={{
                                 backgroundColor: 'transparent',
                                 color: '#8B5CF6',
@@ -593,12 +593,12 @@ const PremiumWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart,
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                     <span style={{ color: '#A1A1AA' }}>Subtotal:</span>
-                    <span style={{ color: '#FFFFFF' }}>${getTotalPrice().toFixed(2)}</span>
+                    <span style={{ color: '#FFFFFF' }}>${menuItems.reduce((total: number, item: MenuItem) => total + (item.price * (cart[item.id] || 0)), 0).toFixed(2)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: '#A1A1AA' }}>Total:</span>
                     <span style={{ fontSize: '18px', fontWeight: 'bold', background: 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                      ${getTotalPrice().toFixed(2)}
+                      ${menuItems.reduce((total: number, item: MenuItem) => total + (item.price * (cart[item.id] || 0)), 0).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -631,14 +631,11 @@ const PremiumWidget = ({ restaurant, menuItems, cart, addToCart, removeFromCart,
 
 export default function WidgetPage() {
   const { restaurantId } = useParams<{ restaurantId: string }>();
-  const navigate = useNavigate();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [cart, setCart] = useState<{ [key: string]: number }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showUpgrade, setShowUpgrade] = useState(false);
-  const [upgradeModalPlan, setUpgradeModalPlan] = useState<string | null>(null);
   const [themeOverride, setThemeOverride] = useState<'basic' | 'pro' | 'premium' | null>(null);
 
   // Get theme from URL query parameter
@@ -685,28 +682,6 @@ export default function WidgetPage() {
     }));
   };
 
-  const removeFromCart = (itemId: string) => {
-    setCart((prevCart) => {
-      const newCart = { ...prevCart };
-      if (newCart[itemId] > 1) {
-        newCart[itemId] -= 1;
-      } else {
-        delete newCart[itemId];
-      }
-      return newCart;
-    });
-  };
-
-  const getTotalPrice = () => {
-    return menuItems.reduce((total, item) => {
-      return total + (item.price * (cart[item.id] || 0));
-    }, 0);
-  };
-
-  const getTotalItems = () => {
-    return Object.values(cart).reduce((total, qty) => total + qty, 0);
-  };
-
   if (loading) {
     return (
       <div style={{
@@ -742,9 +717,6 @@ export default function WidgetPage() {
     );
   }
 
-  const plan = (restaurant.plan || 'pro').toLowerCase();
-  const currentPlan = PLAN_FEATURES[plan as keyof typeof PLAN_FEATURES] || PLAN_FEATURES.pro;
-
   // Render the appropriate widget based on widgetTheme preference
   // URL query parameter takes priority over database theme
   const theme = (themeOverride || restaurant.widgetTheme || 'pro').toLowerCase();
@@ -768,9 +740,7 @@ export default function WidgetPage() {
         menuItems={menuItems}
         cart={cart}
         addToCart={addToCart}
-        removeFromCart={removeFromCart}
-        getTotalPrice={getTotalPrice}
-        getTotalItems={getTotalItems}
+        setCart={setCart}
       />
 
       {/* Upgrade Modal - Removed from widget, only shown in dashboard */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { CartItem } from '@/types';
 import { X, Plus, Minus } from 'lucide-react';
 

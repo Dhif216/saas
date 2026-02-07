@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import { menuService } from '@/services/menuService';
 import { restaurantService } from '@/services/restaurantService';
 import { useToast } from '@/hooks/useToast';
@@ -9,7 +8,6 @@ import type { MenuItem, Restaurant } from '@/types';
 
 const MenuManagement: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { addToast } = useToast();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
@@ -71,7 +69,7 @@ const MenuManagement: React.FC = () => {
         description: formData.description,
         price: parseFloat(formData.price),
         category: formData.category,
-        image_url: formData.image,
+        image: formData.image || undefined,
         available: formData.available,
       });
       
@@ -99,7 +97,7 @@ const MenuManagement: React.FC = () => {
       description: item.description,
       price: item.price.toString(),
       category: item.category,
-      image: item.image,
+      image: item.image || '',
       available: item.available,
     });
   };
@@ -111,7 +109,7 @@ const MenuManagement: React.FC = () => {
         description: formData.description,
         price: parseFloat(formData.price),
         category: formData.category,
-        image_url: formData.image,
+        image: formData.image,
         available: formData.available,
       });
 

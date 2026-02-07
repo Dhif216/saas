@@ -12,9 +12,9 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant }) => {
     <Link to={`/restaurant/${restaurant.id}`}>
       <div className="card overflow-hidden h-full hover:shadow-xl transition-all cursor-pointer">
         {/* Image */}
-        {(restaurant.coverImage || restaurant.image_url) && (
+        {(restaurant.coverImage || restaurant.logo) && (
           <img
-            src={restaurant.coverImage || restaurant.image_url}
+            src={restaurant.coverImage || restaurant.logo}
             alt={restaurant.name}
             className="w-full h-48 object-cover"
           />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Check, ArrowRight } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export interface SelectedPlan {
   id: 'classic' | 'pro' | 'silver';
@@ -10,8 +10,6 @@ export interface SelectedPlan {
 
 const PlanSelectionPage: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const signupData = location.state?.signupData;
 
   const plans: SelectedPlan[] = [
     {

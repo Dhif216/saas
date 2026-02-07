@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { CreditCard, Check, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Check } from 'lucide-react';
 
 export default function SubscriptionPage() {
-  const [selectedPlan, setSelectedPlan] = useState('plus');
-  const [billingCycle, setBillingCycle] = useState('monthly');
+  const [selectedPlan, setSelectedPlan] = useState<string>('plus');
 
-  const plans = {
+  const plans: Record<string, any> = {
     basic: {
       name: 'Starter',
       monthlyFee: 0,
@@ -179,7 +178,7 @@ export default function SubscriptionPage() {
                 </button>
 
                 <ul className="space-y-2 text-sm">
-                  {plan.features.slice(0, 4).map((feature, idx) => (
+                  {plan.features.slice(0, 4).map((feature: any, idx: number) => (
                     <li key={idx} className="flex items-start gap-2">
                       <Check size={16} className="text-green-500 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-700">{feature}</span>
@@ -214,7 +213,7 @@ export default function SubscriptionPage() {
                     max="500"
                     step="10"
                     defaultValue="50"
-                    onChange={(e) => {
+                    onChange={() => {
                       // Update calculations (for demo)
                     }}
                     className="w-full"

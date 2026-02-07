@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, ShoppingBag, TrendingUp, Users, Menu, Settings, Code, LogOut, Plus, Edit2, Trash2, Clock, CheckCircle, Truck, DollarSign, Power, Star, MessageSquare, RefreshCw, Bell, AlertCircle, CheckCheck, X, Tag, Percent, Calendar, Copy, MapPin, Smartphone, Mail, CreditCard, Link2, Eye } from 'lucide-react';
+import { BarChart3, ShoppingBag, TrendingUp, Users, Menu, Settings, Code, LogOut, Plus, Edit2, Trash2, CheckCircle, DollarSign, Power, Star, MessageSquare, RefreshCw, Bell, AlertCircle, CheckCheck, X, Tag, Percent, Calendar, Copy, MapPin, Smartphone, Mail, CreditCard, Link2, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { restaurantService } from '@/services/restaurantService';
@@ -20,7 +20,6 @@ const RestaurantDashboard: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewStats, setReviewStats] = useState<{ averageRating: number; totalReviews: number; distribution: Record<number, number> } | null>(null);
   const [ordersLoading, setOrdersLoading] = useState(false);
-  const [menuLoading, setMenuLoading] = useState(false);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [notifications, setNotifications] = useState<Array<{ id: string; type: 'order' | 'review' | 'status' | 'alert'; title: string; message: string; timestamp: Date; read: boolean; actionUrl?: string }>>([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
@@ -39,7 +38,6 @@ const RestaurantDashboard: React.FC = () => {
     usageLimit: '',
     expiryDate: '',
   });
-  const [showSettingsForm, setShowSettingsForm] = useState(false);
   const [settingsFormData, setSettingsFormData] = useState({
     name: '',
     description: '',
@@ -62,7 +60,6 @@ const RestaurantDashboard: React.FC = () => {
     stripeKey: '',
     paypalEmail: '',
   });
-  const [widgetCode, setWidgetCode] = useState('');
   const [paymentSectionUnlocked, setPaymentSectionUnlocked] = useState(false);
   const [paymentSecurityPassword, setPaymentSecurityPassword] = useState('');
   const [widgetTheme, setWidgetTheme] = useState<'basic' | 'pro' | 'premium'>('pro');
@@ -223,7 +220,7 @@ const RestaurantDashboard: React.FC = () => {
             });
           }
 
-          if (order.status === 'completed') {
+          if (order.status === 'delivered') {
             generatedNotifications.push({
               id: `status-completed-${order.id}`,
               type: 'status',
@@ -242,7 +239,7 @@ const RestaurantDashboard: React.FC = () => {
           generatedNotifications.push({
             id: `review-${review.id}`,
             type: 'review',
-            title: `New Review from ${review.customerName || 'Customer'}`,
+            title: `New Review from ${review.userName || 'Customer'}`,
             message: `${review.rating} stars: ${review.comment?.substring(0, 50)}${review.comment && review.comment.length > 50 ? '...' : ''}`,
             timestamp: new Date(review.createdAt),
             read: true,
@@ -299,15 +296,15 @@ const RestaurantDashboard: React.FC = () => {
       const customerMap = new Map<string, any>();
       
       orders.forEach(order => {
-        const customerId = order.customerId || order.id;
-        const customerName = order.customerName || 'Unknown';
+        const customerId = order.userId || order.id;
+        const customerName = 'Customer';
         
         if (!customerMap.has(customerId)) {
           customerMap.set(customerId, {
             id: customerId,
             name: customerName,
-            email: order.customerEmail || 'N/A',
-            phone: order.customerPhone || 'N/A',
+            email: order.deliveryAddress?.state || 'N/A',
+            phone: order.deliveryAddress?.zipCode || 'N/A',
             totalOrders: 0,
             totalSpent: 0,
             lastOrderDate: new Date(order.createdAt),
@@ -414,7 +411,7 @@ const RestaurantDashboard: React.FC = () => {
                     const newRestaurant = await restaurantService.createRestaurant({
                       name: formData.name,
                       description: formData.description,
-                      imageUrl: 'https://via.placeholder.com/300x200?text=' + encodeURIComponent(formData.name || 'Restaurant'),
+                      logo: 'https://via.placeholder.com/300x200?text=' + encodeURIComponent(formData.name || 'Restaurant'),
                       plan: 'basic',
                     });
                     setRestaurant(newRestaurant);
@@ -857,7 +854,7 @@ const RestaurantDashboard: React.FC = () => {
               {menuItems.length === 0 ? (
                 <p style={{ fontSize: '14px', color: '#6B7280' }}>No menu items yet</p>
               ) : (
-                <div style={{ space: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {menuItems.slice(0, 5).map((item) => (
                     <div
                       key={item.id}
@@ -1288,7 +1285,7 @@ const RestaurantDashboard: React.FC = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
                           <div>
                             <h4 style={{ fontWeight: '600', color: '#1F2937', marginBottom: '4px' }}>
-                              {review.customerName}
+                              {review.userName}
                             </h4>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <div style={{ display: 'flex', gap: '4px' }}>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Check, Crown, Zap, Sparkles } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { restaurantService } from '@/services/restaurantService';
 
 interface RestaurantData {
@@ -66,7 +66,6 @@ export default function SubscriptionManagement() {
   const { restaurantId } = useParams();
   const [restaurant, setRestaurant] = useState<RestaurantData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
 
   useEffect(() => {
@@ -74,7 +73,9 @@ export default function SubscriptionManagement() {
       try {
         if (restaurantId) {
           const data = await restaurantService.getRestaurantById(restaurantId);
-          setRestaurant(data);
+          if (data) {
+            setRestaurant({ id: data.id, name: data.name, plan: data.plan || 'basic' } as RestaurantData);
+          }
         }
       } catch (error) {
         console.error('Failed to load restaurant:', error);
@@ -93,12 +94,11 @@ export default function SubscriptionManagement() {
     
     try {
       // Call backend to update plan
-      const response = await restaurantService.updateRestaurantPlan(restaurant.id, planKey);
+      const response = await restaurantService.updateRestaurantPlan(restaurant.id, planKey as 'basic' | 'pro' | 'premium');
       
       if (response.success) {
         // Update local state
-        setRestaurant({ ...restaurant, plan: planKey });
-        setSelectedPlan(null);
+        setRestaurant({ ...restaurant, plan: planKey as 'basic' | 'pro' | 'premium' });
         
         // Show success message
         alert(`Successfully upgraded to ${PLAN_FEATURES[planKey].name} plan!`);
@@ -121,7 +121,6 @@ export default function SubscriptionManagement() {
       
       if (response.success) {
         setRestaurant({ ...restaurant, plan: 'basic' });
-        setSelectedPlan(null);
         alert('Successfully downgraded to Basic plan!');
       }
     } catch (error) {

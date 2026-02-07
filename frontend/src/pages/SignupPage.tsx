@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { User, Mail, Lock, Phone, AlertCircle, User2, CreditCard } from 'lucide-react';
+import { User, Mail, Lock, Phone, AlertCircle, CreditCard } from 'lucide-react';
 
 interface SelectedPlan {
   id: 'classic' | 'pro' | 'silver';

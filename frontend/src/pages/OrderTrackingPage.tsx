@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Clock, MapPin, Package, CheckCircle, X } from 'lucide-react';
+import { Clock, MapPin, CheckCircle } from 'lucide-react';
 import { orderService } from '@/services/orderService';
 import type { Order, OrderStatus } from '@/types';
 
