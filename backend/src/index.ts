@@ -24,18 +24,23 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'https://saas-lhia-seven.vercel.app',
+  'capacitor://localhost',
   /.*\.vercel\.app$/, // Allow all Vercel deployments
+  /.*\.onrender\.com$/, // Allow all Render deployments
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.some(allowed => 
+      // Allow requests with no origin (mobile apps, curl, etc)
+      if (!origin) {
+        callback(null, true);
+      } else if (allowedOrigins.some(allowed => 
         typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
       )) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(null, true); // For mobile apps, allow all origins
       }
     },
     credentials: true,
