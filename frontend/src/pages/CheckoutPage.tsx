@@ -133,9 +133,11 @@ const CheckoutPage: React.FC = () => {
 
       // If paying by cash, create order directly
       setLoading(true);
+      const totals = getTotals();
       const orderData = {
         restaurantId: cart.restaurantId,
         items: cart.items,
+        totalAmount: totals.total,
         deliveryAddress: {
           street: formData.address,
           city: formData.city,
@@ -147,9 +149,11 @@ const CheckoutPage: React.FC = () => {
         specialInstructions: formData.specialInstructions,
       };
 
+      console.log('Creating cash order with data:', orderData);
       const order = await orderService.createOrder(orderData);
       clearCart();
-      navigate(`/orders/${order.id}`);
+      setOrderPlaced(true);
+      setTimeout(() => navigate(`/orders/${order.id || (order as any).data?.id}`), 2000);
     } catch (err: any) {
       setError(err.message || 'Failed to place order. Please try again.');
     } finally {
