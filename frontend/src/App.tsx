@@ -42,7 +42,7 @@ const App: React.FC = () => {
               <Route
                 path="/checkout"
                 element={
-                  <ProtectedRoute requiredRole="customer">
+                  <ProtectedRoute>
                     <CheckoutPage />
                   </ProtectedRoute>
                 }

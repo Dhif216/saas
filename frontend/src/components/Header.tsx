@@ -10,6 +10,14 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { redirectTo: '/checkout' } });
+    } else {
+      navigate('/checkout');
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
     navigate('/');
@@ -51,14 +59,14 @@ const Header: React.FC = () => {
           )}
 
           {/* Cart */}
-          <Link to="/checkout" className="relative text-dark hover:text-primary transition">
+          <button onClick={handleCartClick} className="relative text-dark hover:text-primary transition">
             <ShoppingCart size={24} />
             {cartItemCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {cartItemCount}
               </span>
             )}
-          </Link>
+          </button>
 
           {/* User Menu */}
           {isAuthenticated ? (

@@ -25,6 +25,24 @@ const CheckoutPage: React.FC = () => {
     specialInstructions: '',
   });
 
+  // Redirect restaurant users to their dashboard
+  if (user?.role === 'restaurant') {
+    return (
+      <div className="min-h-screen py-12">
+        <div className="container-max text-center">
+          <h1 className="text-3xl font-bold text-dark mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-8">Restaurant accounts cannot place orders</p>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="btn-primary"
+          >
+            Go to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!cart || cart.items.length === 0) {
     return (
       <div className="min-h-screen py-12">
