@@ -32,7 +32,7 @@ export const orderController = {
 
       // Create order items
       for (const item of items) {
-        await createOrderItem(order.id, item.id, item.quantity, item.price);
+        await createOrderItem(order.id, item.menuItemId || item.id, item.quantity, item.price);
       }
 
       // Create payment intent
