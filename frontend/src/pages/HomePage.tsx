@@ -10,11 +10,13 @@ const HomePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         setLoading(true);
+        setError(null);
         const data = await restaurantService.getRestaurants();
         console.log('Raw fetched restaurants:', data);
         console.log('Mapped cuisines:', data?.map(r => ({ name: r.name, cuisine: r.cuisine })));
@@ -23,11 +25,13 @@ const HomePage: React.FC = () => {
           setFilteredRestaurants(data);
         } else {
           console.error('Data is not an array:', data);
+          setError('Failed to load restaurants: Invalid data format');
           setRestaurants([]);
           setFilteredRestaurants([]);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to fetch restaurants:', error);
+        setError(`Failed to load restaurants: ${error?.message || 'Unknown error'}`);
         setRestaurants([]);
         setFilteredRestaurants([]);
       } finally {
@@ -134,6 +138,13 @@ const HomePage: React.FC = () => {
       {/* Restaurants Grid */}
       <section className="py-12">
         <div className="container-max">
+          {error && (
+            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+              <p className="font-bold">Error</p>
+              <p>{error}</p>
+              <p className="text-sm mt-2">API URL: {import.meta.env.VITE_API_URL}</p>
+            </div>
+          )}
           {loading ? (
             <div className="flex items-center justify-center min-h-96">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

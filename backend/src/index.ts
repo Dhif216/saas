@@ -67,6 +67,16 @@ app.get('/health', (req: any, res: any) => {
   res.json({ success: true, message: 'Server is running' });
 });
 
+// Test endpoint for debugging
+app.get('/api/test', (req: any, res: any) => {
+  res.json({ 
+    success: true, 
+    message: 'API is working!',
+    timestamp: new Date().toISOString(),
+    origin: req.headers.origin,
+  });
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/restaurants', restaurantRoutes);
