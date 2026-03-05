@@ -9,14 +9,31 @@ export const orderController = {
         return res.status(401).json({ success: false, message: 'Not authenticated' });
       }
 
+      const { restaurantId, items, totalAmount, deliveryAddress, phone, specialInstructions } = req.body;
+
+      // Validate required fields
+      if (!restaurantId || !items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ success: false, message: 'Missing required fields: restaurantId and items array' });
+      }
+
+      if (!totalAmount || !deliveryAddress || !phone) {
+        return res.status(400).json({ success: false, message: 'Missing required fields: totalAmount, deliveryAddress, phone' });
+      }
+
+      // Create the order
       const order = await createOrder(
         req.user.userId,
-        req.body.restaurantId,
-        req.body.totalAmount,
-        req.body.deliveryAddress,
-        req.body.phone,
-        req.body.specialInstructions
+        restaurantId,
+        totalAmount,
+        typeof deliveryAddress === 'string' ? deliveryAddress : JSON.stringify(deliveryAddress),
+        phone,
+        specialInstructions || ''
       );
+
+      // Create order items
+      for (const item of items) {
+        await createOrderItem(order.id, item.id, item.quantity, item.price);
+      }
 
       // Create payment intent
       const paymentIntent = await paymentService.createPaymentIntent(
@@ -33,7 +50,8 @@ export const orderController = {
         },
       });
     } catch (error: any) {
-      res.status(500).json({ success: false, message: error.message });
+      console.error('Order creation error:', error);
+      res.status(500).json({ success: false, message: error.message || 'Failed to create order' });
     }
   },
 

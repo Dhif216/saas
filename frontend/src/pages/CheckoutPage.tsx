@@ -9,7 +9,7 @@ import { ArrowLeft, MapPin, Phone, AlertCircle } from 'lucide-react';
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
-  const { cart, removeItem, updateQuantity, clearCart } = useCart();
+  const { cart, removeItem, updateQuantity, clearCart, getTotals } = useCart();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -77,10 +77,14 @@ const CheckoutPage: React.FC = () => {
       console.log('Processing payment:', paymentData);
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
+      // Get total amount from getTotals
+      const totals = getTotals();
+
       // Create order after payment
       const orderData = {
         restaurantId: cart.restaurantId,
         items: cart.items,
+        totalAmount: totals.total,
         deliveryAddress: {
           street: formData.address,
           city: formData.city,
@@ -97,11 +101,13 @@ const CheckoutPage: React.FC = () => {
         },
       };
 
+      console.log('Creating order with data:', orderData);
       const order = await orderService.createOrder(orderData);
       clearCart();
       setOrderPlaced(true);
-      setTimeout(() => navigate(`/orders/${order.id}`), 2000);
+      setTimeout(() => navigate(`/orders/${order.id || (order as any).data?.id}`), 2000);
     } catch (err: any) {
+      console.error('Order creation error:', err);
       setError(err.message || 'Payment processing failed. Please try again.');
     } finally {
       setLoading(false);
