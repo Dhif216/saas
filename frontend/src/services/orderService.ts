@@ -42,4 +42,9 @@ export const orderService = {
     const response = await apiClient.get('/orders/history');
     return response.data;
   },
+
+  async getOrdersByRestaurant(restaurantId: string): Promise<Order[]> {
+    const response = await apiClient.get(`/restaurants/${restaurantId}/orders`);
+    return response.data.data || response.data;
+  },
 };

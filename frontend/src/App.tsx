@@ -20,6 +20,7 @@ import WidgetPage from '@/pages/WidgetPage';
 import SubscriptionManagement from '@/pages/SubscriptionManagement';
 import AboutPage from '@/pages/AboutPage';
 import ContactPage from '@/pages/ContactPage';
+import OrderAlertDashboard from '@/pages/OrderAlertDashboard';
 
 const App: React.FC = () => {
   return (
@@ -75,6 +76,14 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute requiredRole="restaurant">
                     <MenuManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/alerts"
+                element={
+                  <ProtectedRoute requiredRole="restaurant">
+                    <OrderAlertDashboard />
                   </ProtectedRoute>
                 }
               />
